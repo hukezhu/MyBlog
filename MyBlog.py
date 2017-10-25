@@ -3,11 +3,17 @@
 import sys
 from flask import Flask , request, make_response ,redirect , abort, render_template
 from flask.ext.bootstrap import Bootstrap
-
+from flask.ext.moment import Moment
+from datetime import datetime
+from flask.ext.wtf import Form
+from wtforms import StringField , SubmitField
+from wtforms.validators import Required
 
 app = Flask(__name__)
 
 bootstrap = Bootstrap(app)
+
+moment = Moment(app)
 
 
 reload(sys)
@@ -17,7 +23,7 @@ sys.setdefaultencoding('utf8')
 def index():
     user_agent = request.headers.get('User-Agent')
     #return '<h1>Hello World!</h1> <h2> 你的浏览器是 %s</h2>' % user_agent , 400
-    return render_template('index.html')
+    return render_template('index.html',current_time=datetime.utcnow())
 
 @app.route('/res')
 def testresponse():
@@ -47,6 +53,12 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template('500.html'),500
+
+
+class NameForm(Form):
+    name = StringField('What is your name?',validators=[Required()])
+    submit = SubmitField('Submit')
+
 
 
 
